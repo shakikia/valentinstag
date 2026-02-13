@@ -13,8 +13,10 @@ body{
     color:white;
     font-family:'Poppins',sans-serif;
     text-align:center;
-    overflow:hidden;
+    overflow-x:hidden;   /* nur horizontal blockieren */
+    overflow-y:auto;     /* vertikal scrollen erlauben */
 }
+
 
 /* ✨ PINK GLITTER */
 .glitter{
@@ -67,11 +69,14 @@ button:hover{opacity:0.8;}
     border-radius:20px;
     margin:30px auto;
     max-width:700px;
-    font-family:'Great Vibes',cursive;
-    font-size:24px;
-    line-height:1.6;
+    font-family:'Poppins',sans-serif;   /* gut lesbar */
+    font-size:18px;                    /* nicht zu groß */
+    line-height:1.8;
     text-align:left;
+    max-height:500px;                  /* eigene Scrollbox */
+    overflow-y:auto;
 }
+
 
 .bouquet{
     font-size:100px;
