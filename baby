@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>For you my love</title>
+
+  <style>
+    :root{
+      --bg1:#0b0a10;
+      --bg2:#120b18;
+      --card: rgba(255,255,255,.06);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --border: rgba(255,255,255,.14);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 22px;
+      --pink: rgba(255,80,140,.85);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      min-height:100svh;
+      background:
+        radial-gradient(900px 700px at 10% 10%, rgba(255,80,140,.18), transparent 60%),
+        radial-gradient(900px 700px at 90% 20%, rgba(170,90,255,.16), transparent 62%),
+        radial-gradient(800px 600px at 50% 90%, rgba(255,230,180,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 22px;
+      overflow-x:hidden;
+    }
+
+    /* subtle floating hearts background */
+    .bg-heart{
+      position: fixed;
+      left: var(--x);
+      top: 110%;
+      font-size: var(--s);
+      opacity: .18;
+      animation: floatUp var(--d) linear infinite;
+      filter: blur(.2px);
+      pointer-events:none;
+    }
+    @keyframes floatUp{
+      from{ transform: translateY(0) rotate(0deg); }
+      to{ transform: translateY(-130vh) rotate(25deg); }
+    }
+
+    .app{ width:min(920px, 100%); display:grid; gap:18px; }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transform: translateY(6px);
+      opacity: 0;
+      animation: fadeInUp .55s ease forwards;
+    }
+    @keyframes fadeInUp{
+      to{ transform: translateY(0); opacity: 1; }
+    }
+
+    .pad{ padding: 22px; }
+    .center{ text-align:center; }
+
+    h1{
+      margin: 10px 0 6px;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: .3px;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size: 14.5px;
+      line-height: 1.45;
+    }
+
+    .media{ display:flex; justify-content:center; padding: 18px 18px 0; }
+    .tenor-wrap{
+      width:min(520px, 100%);
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      transform: translateY(0);
+      animation: bob 2.6s ease-in-out infinite;
+    }
+    @keyframes bob{
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(-6px); }
+    }
+    .tenor-wrap iframe{ display:block; width:100%; height: 280px; border:0; }
+
+    /* Buttons */
+    .btnrow{ display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top: 14px; }
+    .btn{
+      cursor:pointer;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 11px 14px;
+      border-radius: 999px;
+      font-weight: 650;
+      letter-spacing:.2px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn.primary{ background: rgba(255,80,140,.18); border-color: rgba(255,80,140,.38); }
+
+    /* Heart button */
+    .heart{
+      width: 160px;
+      height: 140px;
+      border: 0;
+      background: transparent;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      margin: 8px auto 2px;
+      transition: transform .12s ease;
+      position: relative;
+    }
+    .heart:hover{ transform: translateY(-1px) scale(1.02); }
+    .heart:active{ transform: translateY(0px) scale(.99); }
+    .heart svg{
+      filter: drop-shadow(0 18px 26px rgba(255,80,140,.22));
+      animation: pulse 1.35s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{ transform: scale(1); }
+      50%{ transform: scale(1.035); }
+    }
+    .heart .label{
+      position:absolute;
+      transform: translateY(4px);
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: .2px;
+      color: rgba(255,255,255,.94);
+      text-shadow: 0 2px 12px rgba(0,0,0,.45);
+      pointer-events:none;
+    }
+
+    .scene{ display:none; }
+    .scene.active{ display:block; }
+
+    /* Envelope */
+    .envelope-wrap{ display:flex; justify-content:center; margin-top: 16px; }
+    .envelope{
+      width: min(560px, 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      padding: 16px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease;
+      position: relative;
+      overflow:hidden;
+    }
+    .envelope::after{
+      content:"";
+      position:absolute;
+      inset:-80px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,80,140,.22), transparent 55%);
+      transform: rotate(12deg);
+      opacity:.8;
+    }
+    .envelope > *{ position: relative; z-index:1; }
+    .envelope:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
+    .envelope h2{ margin: 0 0 8px; font-size: 18px; }
+    .envelope p{ margin:0; color: var(--muted); line-height: 1.55; font-size: 14.5px; }
+
+    /* Letter */
+    .letter{
+      margin-top: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      padding: 18px;
+      display:none;
+      transform-origin: top;
+      animation: pop .25s ease-out;
+    }
+    @keyframes pop{
+      from{ transform: scale(.985); opacity:.6; }
+      to{ transform: scale(1); opacity:1; }
+    }
+    .letter.show{ display:block; }
+    .letter .to{ color: rgba(255,255,255,.90); font-weight: 800; margin:0 0 10px; }
+    .letter .body{ margin:0; color: rgba(255,255,255,.86); line-height: 1.7; white-space: pre-wrap; }
+    .divider{ height:1px; background: rgba(255,255,255,.12); margin: 14px 0; }
+
+    /* Bouquet */
+    .rose-wrap{ display:flex; justify-content:center; margin-top: 8px; }
+    .bouquet{
+      width: min(620px, 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      padding: 16px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease;
+      user-select:none;
+    }
+    .bouquet:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
+    .bouquet .hint{ margin-top: 10px; color: var(--muted); font-size: 14px; text-align:center; }
+
+    .reasons{
+      display:none;
+      margin-top: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      padding: 16px;
+      animation: pop .25s ease-out;
+    }
+    .reasons.show{ display:block; }
+    .reasons h3{ margin: 0 0 10px; font-size: 18px; }
+    .reasons ul{ margin: 0; padding-left: 18px; color: rgba(255,255,255,.86); line-height: 1.65; }
+
+    .tiny{ text-align:center; color: rgba(255,255,255,.55); font-size: 12.5px; margin-top: 2px; }
+  </style>
+</head>
+
+<body>
+  <!-- ambient floating hearts -->
+  <div class="bg-heart" style="--x:8%; --s:22px; --d:12s;">❤</div>
+  <div class="bg-heart" style="--x:18%; --s:16px; --d:15s;">❤</div>
+  <div class="bg-heart" style="--x:33%; --s:26px; --d:11s;">❤</div>
+  <div class="bg-heart" style="--x:52%; --s:18px; --d:14s;">❤</div>
+  <div class="bg-heart" style="--x:67%; --s:24px; --d:13s;">❤</div>
+  <div class="bg-heart" style="--x:82%; --s:17px; --d:16s;">❤</div>
+  <div class="bg-heart" style="--x:92%; --s:28px; --d:10s;">❤</div>
+
+  <main class="app">
+
+    <!-- Audio: starts on first click (browser-friendly). Put song.mp3 in repo root -->
+    <audio id="bgMusic" loop preload="auto">
+      <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- SCENE 1 -->
+    <section id="scene1" class="card scene active">
+      <div class="media">
+        <div class="tenor-wrap" aria-label="Milk and Mocha gif">
+          <iframe
+            src="https://tenor.com/embed/4931412049723616980"
+            title="Milk and Mocha"
+            loading="lazy"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <div class="pad center">
+        <h1>For you, my love</h1>
+        <p class="sub">Hi Jens 💗 I made this for you. Click the heart.</p>
+
+        <button class="heart" id="heartBtn" aria-label="Click on me">
+          <span class="label">click on me</span>
+          <svg width="160" height="140" viewBox="0 0 200 170" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+            <path d="M100 160C100 160 18 112 18 62C18 36 38 18 63 18C80 18 92 27 100 38C108 27 120 18 137 18C162 18 182 36 182 62C182 112 100 160 100 160Z"
+              fill="rgba(255,80,140,0.85)" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+            <path d="M55 45C55 35 64 28 75 28" stroke="rgba(255,255,255,0.45)" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <div class="btnrow">
+          <button class="btn" id="muteBtn" type="button">music: off</button>
+        </div>
+
+        <div class="tiny">made with love ✨</div>
+      </div>
+    </section>
+
+    <!-- SCENE 2 -->
+    <section id="scene2" class="card scene">
+      <div class="pad center">
+        <h1>💋</h1>
+        <p class="sub">Click the envelope.</p>
+
+        <div class="envelope-wrap">
+          <div class="envelope" id="envelopeBtn" role="button" tabindex="0" aria-label="Open the letter">
+            <h2>📩 To: Jens</h2>
+            <p>Click me to open your message.</p>
+          </div>
+        </div>
+
+        <div class="letter" id="letterBox" aria-live="polite">
+          <p class="to">To my Jens,</p>
+          <p class="body" id="letterText"></p>
+
+          <div class="divider"></div>
+          <p class="sub">When you’re done…</p>
+          <div class="btnrow">
+            <button class="btn primary" id="nextFromLetter">click on me</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCENE 3 -->
+    <section id="scene3" class="card scene">
+      <div class="pad center">
+        <h1>For you 🌹</h1>
+        <p class="sub">Click the bouquet.</p>
+
+        <div class="rose-wrap">
+          <div class="bouquet" id="bouquetBtn" role="button" tabindex="0" aria-label="Open the bouquet">
+            <!-- fuller bouquet (more roses) -->
+            <svg viewBox="0 0 760 380" width="100%" height="250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+
+              <!-- wrap -->
+              <path d="M250 340 C335 235, 425 235, 510 340 L380 368 Z" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+              <path d="M380 368 L380 220" stroke="rgba(255,255,255,.16)" stroke-width="3"/>
+
+              <!-- stems -->
+              <path d="M350 270 C320 235, 295 205, 270 150" stroke="rgba(120,220,170,.55)" stroke-width="6" stroke-linecap="round"/>
+              <path d="M380 270 C380 235, 380 205, 380 145" stroke="rgba(120,220,170,.55)" stroke-width="6" stroke-linecap="round"/>
+              <path d="M410 270 C440 235, 465 205, 495 150" stroke="rgba(120,220,170,.55)" stroke-width="6" stroke-linecap="round"/>
+              <path d="M365 270 C340 240, 330 215, 315 175" stroke="rgba(120,220,170,.50)" stroke-width="6" stroke-linecap="round"/>
+              <path d="M395 270 C420 240, 430 215, 445 175" stroke="rgba(120,220,170,.50)" stroke-width="6" stroke-linecap="round"/>
+
+              <!-- leaves -->
+              <path d="M300 215 C265 210, 248 235, 272 255 C295 275, 330 255, 336 232 Z" fill="rgba(120,220,170,.28)" stroke="rgba(120,220,170,.35)" stroke-width="2"/>
+              <path d="M460 215 C495 210, 512 235, 488 255 C465 275, 430 255, 424 232 Z" fill="rgba(120,220,170,.28)" stroke="rgba(120,220,170,.35)" stroke-width="2"/>
+              <path d="M350 200 C325 192, 318 214, 334 228 C350 242, 372 232, 374 214 Z" fill="rgba(120,220,170,.24)" stroke="rgba(120,220,170,.32)" stroke-width="2"/>
+
+              <!-- roses (more of them) -->
+              <g filter="url(#soft)">
+                <!-- top row -->
+                <g transform="translate(240,125) scale(0.95)">
+                  <circle cx="0" cy="0" r="44" fill="rgba(255,80,140,.35)"/>
+                  <path d="M0 -40 C20 -40, 34 -24, 34 -6 C34 20, 10 34, 0 34 C-22 34, -36 18, -36 -2 C-36 -22, -20 -40, 0 -40Z"
+                    fill="rgba(255,80,140,.72)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+                </g>
+                <g transform="translate(320,105) scale(1.02)">
+                  <circle cx="0" cy="0" r="48" fill="rgba(255,120,170,.25)"/>
+                  <path d="M0 -44 C24 -44, 40 -26, 40 -6 C40 24, 12 40, 0 40 C-26 40, -42 20, -42 -4 C-42 -28, -22 -44, 0 -44Z"
+                    fill="rgba(255,80,140,.80)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+                </g>
+                <g transform="translate(400,95) scale(1.08)">
+                  <circle cx="0" cy="0" r="52" fill="rgba(255,120,170,.25)"/>
+                  <path d="M0 -48 C26 -48, 44 -28, 44 -6 C44 26, 14 44, 0 44 C-28 44, -46 22, -46 -4 C-46 -30, -24 -48, 0 -48Z"
+                    fill="rgba(255,80,140,.82)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+                </g>
+                <g transform="translate(490,125) scale(0.95)">
+                  <circle cx="0" cy="0" r="44" fill="rgba(255,80,140,.35)"/>
+                  <path d="M0 -40 C20 -40, 34 -24, 34 -6 C34 20, 10 34, 0 34 C-22 34, -36 18, -36 -2 C-36 -22, -20 -40, 0 -40Z"
+                    fill="rgba(255,80,140,.72)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+                </g>
+
+                <!-- middle row -->
+                <g transform="translate(285,165) scale(0.88)">
+                  <circle cx="0" cy="0" r="42" fill="rgba(255,80,140,.28)"/>
+                  <path d="M0 -36 C18 -36, 30 -22, 30 -6 C30 18, 8 30, 0 30 C-20 30, -32 16, -32 -2 C-32 -20, -18 -36, 0 -36Z"
+                    fill="rgba(255,80,140,.70)" stroke="rgba(255,255,255,.16)" stroke-width="2"/>
+                </g>
+                <g transform="translate(380,150) scale(0.95)">
+                  <circle cx="0" cy="0" r="46" fill="rgba(255,80,140,.22)"/>
+                  <path d="M0 -40 C20 -40, 34 -24, 34 -6 C34 20, 10 34, 0 34 C-22 34, -36 18, -36 -2 C-36 -22, -20 -40, 0 -40Z"
+                    fill="rgba(255,80,140,.78)" stroke="rgba(255,255,255,.16)" stroke-width="2"/>
+                </g>
+                <g transform="translate(475,165) scale(0.88)">
+                  <circle cx="0" cy="0" r="42" fill="rgba(255,80,140,.28)"/>
+                  <path d="M0 -36 C18 -36, 30 -22, 30 -6 C30 18, 8 30, 0 30 C-20 30, -32 16, -32 -2 C-32 -20, -18 -36, 0 -36Z"
+                    fill="rgba(255,80,140,.70)" stroke="rgba(255,255,255,.16)" stroke-width="2"/>
+                </g>
+
+                <!-- bottom accents -->
+                <g transform="translate(330,205) scale(0.78)">
+                  <circle cx="0" cy="0" r="40" fill="rgba(255,120,170,.18)"/>
+                  <path d="M0 -34 C16 -34, 28 -20, 28 -6 C28 16, 8 28, 0 28 C-18 28, -30 14, -30 -2 C-30 -18, -16 -34, 0 -34Z"
+                    fill="rgba(255,80,140,.65)" stroke="rgba(255,255,255,.14)" stroke-width="2"/>
+                </g>
+                <g transform="translate(430,205) scale(0.78)">
+                  <circle cx="0" cy="0" r="40" fill="rgba(255,120,170,.18)"/>
+                  <path d="M0 -34 C16 -34, 28 -20, 28 -6 C28 16, 8 28, 0 28 C-18 28, -30 14, -30 -2 C-30 -18, -16 -34, 0 -34Z"
+                    fill="rgba(255,80,140,.65)" stroke="rgba(255,255,255,.14)" stroke-width="2"/>
+                </g>
+              </g>
+
+              <!-- ribbon -->
+              <path d="M345 300 C370 276, 390 276, 415 300 C390 324, 370 324, 345 300Z"
+                fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+              <path d="M380 300 C380 300, 350 332, 336 346" stroke="rgba(255,255,255,.14)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M380 300 C380 300, 410 332, 424 346" stroke="rgba(255,255,255,.14)" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+
+            <div class="hint">click on the bouquet 🌹</div>
+          </div>
+        </div>
+
+        <div class="reasons" id="reasonsBox">
+          <h3>Things I love about you, Jens…</h3>
+          <ul id="reasonsList"></ul>
+          <div class="btnrow" style="margin-top:14px;">
+            <button class="btn" onclick="goTo(1)">back to start</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const YOUR_LETTER_TEXT = ` Hi babyyy
+ I dont even know how to start this without sounding crazy, well actually I dont really care, I am crazy for you, I am crazy in love with you Jensi. I've never felt like this before. When we talked for the first time I never thought that we could become close like that and become a couple?
+But I am so glad that we got close again, that we got together. I love you more than anything and I really mean it. I am so in love Jensi, I actually thought that I will never feel like this again and tbh I didn't want to because I am scared to get hurt or used. But when I'm with you I don't really think of that.
+I just feel so loved by you Jensi and I want to give you that love back, you deserve the world. Don't let anyone tell you otherwise because they clearly don't even know you and it makes me so sad whenever you say you are a bad boyfriend or a terrible person, like baby shh you are the best I promise.
+It's okay to make mistakes, to cry, to overthink, to struggle, it is fine baby, it won't change my love for you. Whenever I wake up, the first thing that's in my mind is you. I am so attached to you even though I'm actually a nonchalant sigma( please laugh) 
+No but I'm so serious I'm actually not even into that lover girl/ boy stuff but with you it is so different, like I feel like a little girl, I can say whatever I want and I feel so comfy with you, you are the first person who makes me feel like I'm actually someon, like I'm seen.
+You are changing me Jensi, in a good way. And I'm so proud of you baby, I know you struggle with lots of things and I'm so so proud of you, you are so strong. I can't wait to see you and give you hugs, 10000 kisses and show you my love. I know I can't really show my love and I'm sorry for that but I want you to know 
+that I love you and I so mean it. I'm so proud to say that you are my boyfriend and I'm praying that we will last forever, I can't imagine myself with another guy. 
+
+I love you my handsome boy
+💗`;
+
+    
+    const REASONS = [
+      "Like… you make me feel safe.",
+      "Your voice. It’s honestly my comfort.",
+      "How you actually try to communicate.",
+      "Your softness (even if you act tough sometimes).",
+      "The way you care deeply.",
+      "Your ambition and your dreams — it’s so attractive.",
+      "How you make me feel chosen.",
+      "Your laugh. It fixes my mood instantly.",
+      "The way you want to be better — I see it.",
+      "Because with you it just feels… right."
+    ];
+
+    // ---- Scene control ----
+    const scenes = [
+      document.getElementById("scene1"),
+      document.getElementById("scene2"),
+      document.getElementById("scene3"),
+    ];
+
+    function goTo(n){
+      scenes.forEach((s,i)=> s.classList.toggle("active", i===n-1));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ---- Audio control (starts after user click) ----
+    const music = document.getElementById("bgMusic");
+    const muteBtn = document.getElementById("muteBtn");
+    let musicOn = false;
+
+    async function startMusic(){
+      if(musicOn) return;
+      try{
+        await music.play();
+        musicOn = true;
+        muteBtn.textContent = "music: on";
+      }catch(e){
+        // If the song file is missing or autoplay still blocked
+        muteBtn.textContent = "music: tap again";
+      }
+    }
+
+    muteBtn.addEventListener("click", async () => {
+      if(!musicOn){
+        await startMusic();
+      }else{
+        music.pause();
+        musicOn = false;
+        muteBtn.textContent = "music: off";
+      }
+    });
+
+    // ---- Scene 1 -> Scene 2 (also starts music) ----
+    document.getElementById("heartBtn").addEventListener("click", async () => {
+      await startMusic();
+      goTo(2);
+    });
+
+    // ---- Envelope opens letter ----
+    const envelopeBtn = document.getElementById("envelopeBtn");
+    const letterBox = document.getElementById("letterBox");
+    const letterText = document.getElementById("letterText");
+
+    function openLetter(){
+      letterText.textContent = YOUR_LETTER_TEXT;
+      letterBox.classList.add("show");
+      letterBox.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    envelopeBtn.addEventListener("click", openLetter);
+    envelopeBtn.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openLetter(); } });
+
+    // ---- Next button to bouquet ----
+    document.getElementById("nextFromLetter").addEventListener("click", () => goTo(3));
+
+    // ---- Bouquet click shows reasons ----
+    const bouquetBtn = document.getElementById("bouquetBtn");
+    const reasonsBox = document.getElementById("reasonsBox");
+    const reasonsList = document.getElementById("reasonsList");
+
+    function showReasons(){
+      if(!reasonsList.hasChildNodes()){
+        REASONS.forEach(r=>{
+          const li = document.createElement("li");
+          li.textContent = r;
+          reasonsList.appendChild(li);
+        });
+      }
+      reasonsBox.classList.add("show");
+      reasonsBox.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    bouquetBtn.addEventListener("click", showReasons);
+    bouquetBtn.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); showReasons(); } });
+  </script>
+</body>
+</html>
