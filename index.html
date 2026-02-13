@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>For you my love</title>
+  <style>
+    :root{
+      --bg1:#0b0a10;
+      --bg2:#120b18;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.09);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --border: rgba(255,255,255,.14);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 22px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color: var(--text);
+      min-height:100svh;
+      background:
+        radial-gradient(900px 700px at 10% 10%, rgba(255,80,140,.18), transparent 60%),
+        radial-gradient(900px 700px at 90% 20%, rgba(170,90,255,.16), transparent 62%),
+        radial-gradient(800px 600px at 50% 90%, rgba(255,230,180,.10), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 22px;
+    }
+    .app{
+      width:min(900px, 100%);
+      display:grid;
+      gap:18px;
+    }
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .pad{ padding: 22px; }
+    .center{ text-align:center; }
+    h1{
+      margin: 10px 0 6px;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: .3px;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-size: 14.5px;
+      line-height: 1.45;
+    }
+
+    /* Tenor embed box */
+    .media{
+      display:flex;
+      justify-content:center;
+      padding: 18px 18px 0;
+    }
+    .tenor-wrap{
+      width:min(520px, 100%);
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+    }
+    .tenor-wrap iframe{
+      display:block;
+      width:100%;
+      height: 280px;
+      border:0;
+    }
+
+    /* Buttons */
+    .btnrow{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+    .btn{
+      cursor:pointer;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 11px 14px;
+      border-radius: 999px;
+      font-weight: 650;
+      letter-spacing:.2px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn.primary{
+      background: rgba(255,80,140,.18);
+      border-color: rgba(255,80,140,.38);
+    }
+
+    /* Heart button */
+    .heart{
+      width: 150px;
+      height: 130px;
+      border: 0;
+      background: transparent;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      margin: 8px auto 2px;
+      transition: transform .12s ease;
+    }
+    .heart:hover{ transform: translateY(-1px) scale(1.01); }
+    .heart:active{ transform: translateY(0px) scale(.99); }
+    .heart svg{
+      filter: drop-shadow(0 18px 26px rgba(255,80,140,.22));
+    }
+    .heart .label{
+      position:absolute;
+      transform: translateY(4px);
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: .2px;
+      color: rgba(255,255,255,.94);
+      text-shadow: 0 2px 12px rgba(0,0,0,.45);
+      pointer-events:none;
+    }
+
+    /* Scenes */
+    .scene{ display:none; }
+    .scene.active{ display:block; }
+
+    /* Envelope */
+    .envelope-wrap{
+      display:flex;
+      justify-content:center;
+      margin-top: 16px;
+    }
+    .envelope{
+      width: min(520px, 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      padding: 16px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease;
+    }
+    .envelope:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
+    .envelope h2{
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .envelope p{
+      margin:0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14.5px;
+    }
+
+    /* Letter */
+    .letter{
+      margin-top: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      padding: 18px;
+      display:none;
+    }
+    .letter.show{ display:block; }
+    .letter .to{
+      color: rgba(255,255,255,.86);
+      font-weight: 750;
+      margin:0 0 10px;
+    }
+    .letter .body{
+      margin:0;
+      color: rgba(255,255,255,.86);
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+    .divider{
+      height:1px;
+      background: rgba(255,255,255,.12);
+      margin: 14px 0;
+    }
+
+    /* Rose bouquet */
+    .rose-wrap{
+      display:flex;
+      justify-content:center;
+      margin-top: 8px;
+    }
+    .bouquet{
+      width: min(520px, 100%);
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      padding: 16px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease;
+      user-select:none;
+    }
+    .bouquet:hover{ transform: translateY(-1px); background: rgba(255,255,255,.07); }
+    .bouquet .hint{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align:center;
+    }
+    .reasons{
+      display:none;
+      margin-top: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      padding: 16px;
+    }
+    .reasons.show{ display:block; }
+    .reasons h3{
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .reasons ul{
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(255,255,255,.86);
+      line-height: 1.65;
+    }
+
+    /* Small footer note */
+    .tiny{
+      text-align:center;
+      color: rgba(255,255,255,.55);
+      font-size: 12.5px;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <!-- SCENE 1: Intro -->
+    <section id="scene1" class="card scene active">
+      <div class="media">
+        <div class="tenor-wrap" aria-label="Milk and Mocha gif">
+          <!-- Tenor embed (based on your link id). If it doesn't show, tell me and I’ll swap to a direct GIF. -->
+          <iframe
+            src="https://tenor.com/embed/4931412049723616980"
+            title="Milk and Mocha"
+            loading="lazy"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <div class="pad center">
+        <h1>For you, my love</h1>
+        <p class="sub">Hi Jens 💗 I made this for you. Click the heart.</p>
+
+        <button class="heart" id="heartBtn" aria-label="Click on me">
+          <span class="label">click on me</span>
+          <svg width="150" height="130" viewBox="0 0 200 170" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+            <path d="M100 160C100 160 18 112 18 62C18 36 38 18 63 18C80 18 92 27 100 38C108 27 120 18 137 18C162 18 182 36 182 62C182 112 100 160 100 160Z"
+              fill="rgba(255,80,140,0.85)" stroke="rgba(255,255,255,0.25)" stroke-width="2"/>
+            <path d="M55 45C55 35 64 28 75 28" stroke="rgba(255,255,255,0.45)" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <div class="tiny">made with love ✨</div>
+      </div>
+    </section>
+
+    <!-- SCENE 2: Envelope + Letter -->
+    <section id="scene2" class="card scene">
+      <div class="pad center">
+        <h1>A little letter</h1>
+        <p class="sub">Click the envelope to open it.</p>
+
+        <div class="envelope-wrap">
+          <div class="envelope" id="envelopeBtn" role="button" tabindex="0" aria-label="Open the letter">
+            <h2>📩 To: Jens</h2>
+            <p>Click me to open your message.</p>
+          </div>
+        </div>
+
+        <div class="letter" id="letterBox" aria-live="polite">
+          <p class="to">To my Jens,</p>
+          <p class="body" id="letterText">
+            [PASTE YOUR TEXT HERE]
+          </p>
+          <div class="divider"></div>
+          <p class="sub">When you’re done…</p>
+          <div class="btnrow">
+            <button class="btn primary" id="nextFromLetter">click on me</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCENE 3: Bouquet + Reasons -->
+    <section id="scene3" class="card scene">
+      <div class="pad center">
+        <h1>For you 🌹</h1>
+        <p class="sub">I got you a bouquet… click it.</p>
+
+        <div class="rose-wrap">
+          <div class="bouquet" id="bouquetBtn" role="button" tabindex="0" aria-label="Open the bouquet">
+            <!-- Simple drawn bouquet (SVG) -->
+            <svg viewBox="0 0 700 360" width="100%" height="230" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+
+              <!-- wrap -->
+              <path d="M250 330 C320 240, 380 240, 450 330 L350 350 Z" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+              <path d="M350 350 L350 235" stroke="rgba(255,255,255,.16)" stroke-width="3"/>
+
+              <!-- stems -->
+              <path d="M330 260 C310 230, 290 200, 270 155" stroke="rgba(120,220,170,.55)" stroke-width="6" stroke-linecap="round"/>
+              <path d="M350 260 C350 230, 350 200, 350 155" stroke="rgba(120,220,170,.55)" stroke-width="6" stroke-linecap="round"/>
+              <path d="M370 260 C390 230, 410 200, 430 155" stroke="rgba(120,220,170,.55)" stroke-width="6" stroke-linecap="round"/>
+
+              <!-- leaves -->
+              <path d="M290 215 C260 210, 245 230, 265 246 C285 262, 315 248, 320 230 Z" fill="rgba(120,220,170,.28)" stroke="rgba(120,220,170,.35)" stroke-width="2"/>
+              <path d="M410 215 C440 210, 455 230, 435 246 C415 262, 385 248, 380 230 Z" fill="rgba(120,220,170,.28)" stroke="rgba(120,220,170,.35)" stroke-width="2"/>
+
+              <!-- roses -->
+              <g filter="url(#soft)">
+                <g transform="translate(245,120)">
+                  <circle cx="0" cy="0" r="44" fill="rgba(255,80,140,.35)"/>
+                  <path d="M0 -40 C20 -40, 34 -24, 34 -6 C34 20, 10 34, 0 34 C-22 34, -36 18, -36 -2 C-36 -22, -20 -40, 0 -40Z"
+                        fill="rgba(255,80,140,.72)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+                  <path d="M-10 -6 C-2 -16, 14 -16, 12 -2 C10 10, -6 12, -10 2 Z"
+                        fill="rgba(255,255,255,.14)"/>
+                </g>
+
+                <g transform="translate(350,105)">
+                  <circle cx="0" cy="0" r="52" fill="rgba(255,120,170,.25)"/>
+                  <path d="M0 -48 C26 -48, 44 -28, 44 -6 C44 26, 14 44, 0 44 C-28 44, -46 22, -46 -4 C-46 -30, -24 -48, 0 -48Z"
+                        fill="rgba(255,80,140,.82)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+                  <path d="M-14 -10 C-2 -24, 20 -22, 18 -6 C16 14, -8 16, -14 2 Z"
+                        fill="rgba(255,255,255,.14)"/>
+                </g>
+
+                <g transform="translate(455,120)">
+                  <circle cx="0" cy="0" r="44" fill="rgba(255,80,140,.35)"/>
+                  <path d="M0 -40 C20 -40, 34 -24, 34 -6 C34 20, 10 34, 0 34 C-22 34, -36 18, -36 -2 C-36 -22, -20 -40, 0 -40Z"
+                        fill="rgba(255,80,140,.72)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+                  <path d="M-10 -6 C-2 -16, 14 -16, 12 -2 C10 10, -6 12, -10 2 Z"
+                        fill="rgba(255,255,255,.14)"/>
+                </g>
+              </g>
+
+              <!-- ribbon -->
+              <path d="M320 290 C345 270, 355 270, 380 290 C355 310, 345 310, 320 290Z"
+                    fill="rgba(255,255,255,.10)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+              <path d="M350 290 C350 290, 330 318, 318 330" stroke="rgba(255,255,255,.14)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M350 290 C350 290, 370 318, 382 330" stroke="rgba(255,255,255,.14)" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+
+            <div class="hint">click on the bouquet 🌹</div>
+          </div>
+        </div>
+
+        <div class="reasons" id="reasonsBox">
+          <h3>Things I love about you, Jens…</h3>
+          <ul id="reasonsList"></ul>
+          <div class="btnrow" style="margin-top:14px;">
+            <button class="btn" onclick="goTo(1)">back to start</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ---- Your custom text (replace later) ----
+    const YOUR_LETTER_TEXT = `[PASTE YOUR TEXT HERE]`;
+
+    // ---- Reasons (I filled these in; we can customize them anytime) ----
+    const REASONS = [
+      "The way you make me feel safe, even without saying a word.",
+      "Your laugh — it genuinely fixes my mood.",
+      "How you try, even when things are stressful.",
+      "Your kindness (yes, I notice it).",
+      "The way you look at me like I’m your favorite person.",
+      "Your ambition and the dreams you’re chasing.",
+      "How you can be silly with me and still be serious when it matters.",
+      "The little details you remember about me.",
+      "Your hugs. (No explanation needed.)",
+      "Because being with you feels like home."
+    ];
+
+    // ---- Scene control ----
+    const scenes = [
+      document.getElementById("scene1"),
+      document.getElementById("scene2"),
+      document.getElementById("scene3"),
+    ];
+
+    function goTo(n){
+      scenes.forEach((s,i)=> s.classList.toggle("active", i===n-1));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    // ---- Scene 1 -> Scene 2 ----
+    document.getElementById("heartBtn").addEventListener("click", () => goTo(2));
+
+    // ---- Envelope opens letter ----
+    const envelopeBtn = document.getElementById("envelopeBtn");
+    const letterBox = document.getElementById("letterBox");
+    const letterText = document.getElementById("letterText");
+
+    function openLetter(){
+      letterText.textContent = (YOUR_LETTER_TEXT && YOUR_LETTER_TEXT.trim() !== "[PASTE YOUR TEXT HERE]")
+        ? YOUR_LETTER_TEXT
+        : "Paste your message into the code where it says [PASTE YOUR TEXT HERE], then it will show up here 💗";
+      letterBox.classList.add("show");
+      letterBox.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    envelopeBtn.addEventListener("click", openLetter);
+    envelopeBtn.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openLetter(); } });
+
+    // ---- Next button to bouquet ----
+    document.getElementById("nextFromLetter").addEventListener("click", () => goTo(3));
+
+    // ---- Bouquet click shows reasons ----
+    const bouquetBtn = document.getElementById("bouquetBtn");
+    const reasonsBox = document.getElementById("reasonsBox");
+    const reasonsList = document.getElementById("reasonsList");
+
+    function showReasons(){
+      if(!reasonsList.hasChildNodes()){
+        REASONS.forEach(r=>{
+          const li = document.createElement("li");
+          li.textContent = r;
+          reasonsList.appendChild(li);
+        });
+      }
+      reasonsBox.classList.add("show");
+      reasonsBox.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    bouquetBtn.addEventListener("click", showReasons);
+    bouquetBtn.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); showReasons(); } });
+  </script>
+</body>
+</html>
