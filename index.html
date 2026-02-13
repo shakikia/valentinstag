@@ -13,9 +13,10 @@ body{
     color:white;
     font-family:'Poppins',sans-serif;
     text-align:center;
-    overflow-x:hidden;   /* nur horizontal blockieren */
-    overflow-y:auto;     /* vertikal scrollen erlauben */
+    overflow-x:hidden;
+    min-height:100vh;
 }
+
 
 
 /* ✨ PINK GLITTER */
@@ -34,8 +35,15 @@ body{
     100%{transform:translateY(-800px) scale(0.3); opacity:0;}
 }
 
-.scene{display:none;}
-.active{display:block;}
+.scene{
+    display:none;
+    padding-bottom:80px;  /* extra Platz unten */
+}
+
+.active{
+    display:block;
+}
+
 
 button{
     background:#ff4d8d;
